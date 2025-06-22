@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Add Product</title>
+  <title>Product Manager</title>
   <style>
     body {
       margin: 0;
@@ -18,7 +18,7 @@
       margin-top: 30px;
     }
 
-    form {
+    form, #searchBar {
       background-color: #ffffffcc;
       padding: 20px 30px;
       margin: 30px auto;
@@ -88,8 +88,7 @@
 </head>
 <body>
 
-  <h2>Add Product:</h2>
-
+  <h2>Add Product</h2>
   <form id="productForm">
     <label for="productCode">Product Code:</label>
     <input type="text" id="productCode" required>
@@ -97,16 +96,25 @@
     <label for="price">Price:</label>
     <input type="number" id="price" required>
 
+    <label for="description">Description:</label>
+    <input type="text" id="description" required>
+
     <button type="button" onclick="addProduct()">Add Product</button>
   </form>
 
-  <h2>Product List:</h2>
+  <h2>Search Product</h2>
+  <div id="searchBar">
+    <input type="text" id="search" placeholder="Search by code, description, or price">
+    <button onclick="searchProduct()">Search</button>
+  </div>
 
+  <h2>Product List</h2>
   <table id="productTable">
     <thead>
       <tr>
         <th>Product Code</th>
         <th>Price</th>
+        <th>Description</th>
         <th>Created At</th>
       </tr>
     </thead>
@@ -114,73 +122,87 @@
   </table>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      fetchProducts();
-    });
+    const API_URL = 'YOUR_API_GATEWAY_URL'; // Replace with your actual URL
+
+    document.addEventListener('DOMContentLoaded', fetchProducts);
 
     function addProduct() {
-      var productCode = document.getElementById('productCode').value;
-      var price = document.getElementById('price').value;
+      const productCode = document.getElementById('productCode').value;
+      const price = document.getElementById('price').value;
+      const description = document.getElementById('description').value;
 
-      var data = {
+      const data = {
         operation: 'addProduct',
-        productCode: productCode,
-        price: price
+        productCode,
+        price,
+        description
       };
 
-      fetch('YOUR_API_GATEWAY_URL', {
+      fetch(API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
       })
-        .then(response => response.json())
-        .then(result => {
-          alert(JSON.parse(result.body));
-          document.getElementById('productCode').value = '';
-          document.getElementById('price').value = '';
-        })
-        .catch(error => {
-          console.error('Error adding product:', error);
-        });
+      .then(response => response.json())
+      .then(result => {
+        alert(JSON.parse(result.body));
+        document.getElementById('productForm').reset();
+        fetchProducts();
+      })
+      .catch(error => {
+        console.error('Error adding product:', error);
+      });
     }
 
     function fetchProducts() {
-      var requestData = {
-        operation: 'listProduct'
-      };
-
-      fetch('YOUR_API_GATEWAY_URL', {
+      fetch(API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operation: 'listProduct' })
       })
-        .then(response => response.json())
-        .then(responseData => {
-          const products = JSON.parse(responseData.body);
-          products.forEach(product => {
-            updateProductTable(product);
-          });
-        })
-        .catch(error => {
-          console.error('Error fetching products:', error);
-        });
+      .then(response => response.json())
+      .then(data => {
+        const products = JSON.parse(data.body);
+        updateTable(products);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
     }
 
-    function updateProductTable(product) {
-      var tableBody = document.getElementById('productTableBody');
-      var row = tableBody.insertRow();
+    function searchProduct() {
+      const keyword = document.getElementById('search').value.toLowerCase();
 
-      var cell1 = row.insertCell(0);
-      var cell2 = row.insertCell(1);
-      var cell3 = row.insertCell(2);
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operation: 'listProduct' })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const products = JSON.parse(data.body);
+        const filtered = products.filter(p =>
+          (p.productCode && p.productCode.toLowerCase().includes(keyword)) ||
+          (p.description && p.description.toLowerCase().includes(keyword)) ||
+          (p.price && String(p.price).toLowerCase().includes(keyword))
+        );
+        updateTable(filtered);
+      })
+      .catch(error => {
+        console.error('Error during search:', error);
+      });
+    }
 
-      cell1.textContent = product.productCode;
-      cell2.textContent = product.price;
-      cell3.textContent = product.createdAt;
+    function updateTable(products) {
+      const tableBody = document.getElementById('productTableBody');
+      tableBody.innerHTML = '';
+      products.forEach(product => {
+        const row = tableBody.insertRow();
+        row.insertCell(0).textContent = product.productCode;
+        row.insertCell(1).textContent = product.price;
+        row.insertCell(2).textContent = product.description || 'N/A';
+        row.insertCell(3).textContent = product.createdAt;
+      });
     }
   </script>
 
