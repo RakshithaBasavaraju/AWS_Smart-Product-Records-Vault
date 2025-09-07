@@ -25,6 +25,8 @@ API Gateway – Exposes Lambda functions through HTTP endpoints.
 HTML/CSS/JavaScript – User interface for interacting with the backend.
 
 📂 Project Structure
+
+
 <img width="796" height="201" alt="image" src="https://github.com/user-attachments/assets/571d8bdd-de0e-4353-8ab9-ae01795874dc" />
 
 
