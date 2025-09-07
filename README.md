@@ -25,10 +25,8 @@ API Gateway – Exposes Lambda functions through HTTP endpoints.
 HTML/CSS/JavaScript – User interface for interacting with the backend.
 
 📂 Project Structure
-AWS Smart Product Records Vault/
-├── lambda_function.py      # Lambda code handling product operations
-├── README.md               # Project documentation
-└── frontend/               # Contains HTML, CSS, and JavaScript code
+<img width="796" height="201" alt="image" src="https://github.com/user-attachments/assets/571d8bdd-de0e-4353-8ab9-ae01795874dc" />
+
 
 ⚙ Setup Instructions
 ✅ DynamoDB Setup
@@ -74,18 +72,8 @@ Use the search bar to filter products by code, description, or price.
 Products are stored permanently in DynamoDB and can be accessed from anywhere.
 
 📦 Example Request Formats
-➤ Add Product
-{
-  "operation": "addProduct",
-  "productCode": "P001",
-  "price": "500",
-  "description": "Sample product"
-}
+<img width="836" height="545" alt="image" src="https://github.com/user-attachments/assets/dcd5e59b-0f92-4e39-ba59-2636fa8814c1" />
 
-➤ List Products
-{
-  "operation": "listProduct"
-}
 
 🚀 Future Improvements
 
@@ -96,3 +84,7 @@ Implement user authentication using AWS Cognito.
 Enable pagination for large datasets.
 
 Add image upload functionality using S3.
+
+📄 License
+
+This project is open-source and available for educational and demonstration purposes.
